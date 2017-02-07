@@ -37,18 +37,18 @@ int epoll_add_fd(int fd)
 int init_epoll()
 {
 	int epfd = -1;
-    struct epoll_event ev;
+    	struct epoll_event ev;
 
-    memset(&ev, 0, sizeof(ev));
+    	memset(&ev, 0, sizeof(ev));
 
-    epfd = epoll_create(EPOLL_LISTEN_CNT);
-    if (epfd < 0) {
+    	epfd = epoll_create(EPOLL_LISTEN_CNT);
+    	if (epfd < 0) {
 		printf("create epoll fd failure\n");
-        return -1;
-    }
-    g_epfd = epfd;
+        	return -1;
+    	}
+    	g_epfd = epfd;
 
-    return 0;
+    	return 0;
 }
 
 int init_listen_sockfd()
@@ -80,16 +80,15 @@ int init_listen_sockfd()
 	}
 	
 	addr.sin_family = AF_INET;
-    addr.sin_port = htons(1900);
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    	addr.sin_port = htons(1900);
+    	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    ret = bind(sock, (struct sockaddr *)&addr, sizeof(struct sockaddr));
-    if(ret < 0) 
-    {
-        perror("socket bind fail.\n");
-        close(sock);
-        return -1;
-    }
+    	ret = bind(sock, (struct sockaddr *)&addr, sizeof(struct sockaddr));
+    	if(ret < 0) {
+        	perror("socket bind failure.\n");
+        	close(sock);
+        	return -1;
+   	 }
 	
 	return sock;
 }
@@ -125,22 +124,22 @@ void packet_recv_handle()
 void epoll_event_handle()
 {
 	int fd_cnt = 0;
-    int i = 0;
-    int fd = -1;
-    struct epoll_event events[EPOLL_EVENT_CNT];
+    	int i = 0;
+    	int fd = -1;
+    	struct epoll_event events[EPOLL_EVENT_CNT];
 
 	printf("enter event handle..\n"); 
-    memset(events, 0, sizeof(events));
-    while (1) {
-        //等待epoll事件的发生
-        fd_cnt = epoll_wait(g_epfd, events, EPOLL_EVENT_CNT, EPOLL_LISTEN_TIMEOUT);
-        for (i = 0; i < fd_cnt; i++) {   
-            fd = events[i].data.fd;
-            if(events[i].events & EPOLLIN) {
-                if (g_listenfd == fd) {
-					packet_recv_handle();
-                }
-            }
+    	memset(events, 0, sizeof(events));
+   	 while (1) {
+        	//等待epoll事件的发生
+        	fd_cnt = epoll_wait(g_epfd, events, EPOLL_EVENT_CNT, EPOLL_LISTEN_TIMEOUT);
+        	for (i = 0; i < fd_cnt; i++) {
+			fd = events[i].data.fd;
+          	  	if(events[i].events & EPOLLIN) {
+            	  	if (g_listenfd == fd) {
+				packet_recv_handle();
+               	 	}
+            	}
         }
     }
     
