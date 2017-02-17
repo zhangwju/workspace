@@ -99,10 +99,10 @@ static void assble_mult_handle(curlbat_req_t * batreq, int reqcnt, void * curlba
 		curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_PRIVATE, &(batreq[i].index));  
 		curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_NOSIGNAL, true);  
 		curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_TIMEOUT_MS , 2000);
-        curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_NOBODY, 1L);  
-        curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_HEADERFUNCTION, write_header_callback);  
-        curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_HEADERDATA,(void *)&batreq[i]);
-        curl_multi_add_handle(curlbat->mult_handle, curlbat->handles[i].curl);		
+        	curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_NOBODY, 1L);  
+        	curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_HEADERFUNCTION, write_header_callback);  
+        	curl_easy_setopt(curlbat->handles[i].curl, CURLOPT_HEADERDATA,(void *)&batreq[i]);
+        	curl_multi_add_handle(curlbat->mult_handle, curlbat->handles[i].curl);		
 	}
 	return;
 }
