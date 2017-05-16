@@ -1,9 +1,3 @@
-/* 
- * NetMonitor.c 
- * 
- *  Created on: 2015年4月25日 
- *      Author: tao 
- */  
 #include <stdio.h>  
 #include <unistd.h>  
 #include <stdlib.h>  

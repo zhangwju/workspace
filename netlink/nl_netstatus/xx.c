@@ -1,20 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  xx.c
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  03/23/2017 05:51:56 AM
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  YOUR NAME (), 
- *        Company:  
- *
- * =====================================================================================
- */
 #include <sys/types.h>  
 #include <sys/socket.h>  
 #include <asm/types.h>  
