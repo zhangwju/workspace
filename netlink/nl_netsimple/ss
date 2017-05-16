@@ -1,0 +1,96 @@
+ifi_flags包含设备的一些标志：
+	IFF_UP                                      接口正在运行
+	IFF_BROADCAST                     有效的广播地址集
+	IFF_DEBUG                              内部调试标志
+	IFF_LOOPBACK                        这是自环接口
+	IFF_POINTOPOINT                   这是点到点的链路设备
+	IFF_RUNNING                          资源已分配
+	IFF_NOARP                              无arp协议，没有设置第二层目的地址
+	IFF_PROMISC                           接口为杂凑(promiscuous)模式
+	IFF_NOTRAILERS                     避免使用trailer
+	IFF_ALLMULTI                         接收所有组播(multicast)报文
+	IFF_MASTER                            主负载平衡群(bundle)
+	IFF_SLAVE                               从负载平衡群(bundle)
+	IFF_MULTICAST                       支持组播(multicast)
+	IFF_PORTSEL                           可以通过ifmap选择介质(media)类型
+	IFF_AUTOMEDIA                     自动选择介质
+	IFF_DYNAMIC                          接口关闭时丢弃地址
+
+rtm_type          Route type
+───────────────────────────────────────────────────────────
+RTN_UNSPEC        unknown route
+RTN_UNICAST       a gateway or direct route
+RTN_LOCAL         a local interface route
+RTN_BROADCAST     a local broadcast route (sent as a broadcast)
+RTN_ANYCAST       a local broadcast route (sent as a unicast)
+RTN_MULTICAST     a multicast route
+RTN_BLACKHOLE     a packet dropping route
+RTN_UNREACHABLE   an unreachable destination
+RTN_PROHIBIT      a packet rejection route
+RTN_THROW         continue routing lookup in another table
+RTN_NAT           a network address translation rule
+RTN_XRESOLVE      refer to an external resolver (not implemented)
+
+
+
+rtm_protocol      Route origin.
+───────────────────────────────────────
+RTPROT_UNSPEC     unknown
+RTPROT_REDIRECT   by an ICMP redirect
+                  (currently unused)
+RTPROT_KERNEL     by the kernel
+RTPROT_BOOT       during boot
+RTPROT_STATIC     by the administrator
+
+Values larger than RTPROT_STATIC are not interpreted by the
+kernel, they are just for user information.  They may be used
+to tag the source of a routing information or to distinguish
+between multiple routing daemons.  See <linux/rtnetlink.h> for
+the routing daemon identifiers which are already assigned.
+
+rtm_scope is the distance to the destination:
+
+RT_SCOPE_UNIVERSE   global route
+RT_SCOPE_SITE       interior route in the
+                    local autonomous system
+RT_SCOPE_LINK       route on this link
+RT_SCOPE_HOST       route on the local host
+RT_SCOPE_NOWHERE    destination doesn't exist
+
+The values between RT_SCOPE_UNIVERSE and RT_SCOPE_SITE are
+available to the user.
+
+The rtm_flags have the following meanings:
+
+RTM_F_NOTIFY     if the route changes, notify the user via
+                 rtnetlink
+RTM_F_CLONED     route is cloned from another route
+RTM_F_EQUALIZE   a multipath equalizer (not yet implemented)
+
+rtm_table specifies the routing table
+
+RT_TABLE_UNSPEC    an unspecified routing table
+RT_TABLE_DEFAULT   the default table
+RT_TABLE_MAIN      the main table
+RT_TABLE_LOCAL     the local table
+
+The user may assign arbitrary values between RT_TABLE_UNSPEC
+and RT_TABLE_DEFAULT
+
+			Attributes
+
+rta_type        value type         description
+──────────────────────────────────────────────────────────────
+RTA_UNSPEC      -                  ignored.
+RTA_DST         protocol address   Route destination address.
+RTA_SRC         protocol address   Route source address.
+RTA_IIF         int                Input interface index.
+RTA_OIF         int                Output interface index.
+RTA_GATEWAY     protocol address   The gateway of the route
+RTA_PRIORITY    int                Priority of route.
+RTA_PREFSRC
+RTA_METRICS     int                Route metric
+RTA_MULTIPATH
+RTA_PROTOINFO
+RTA_FLOW
+RTA_CACHEINFO
