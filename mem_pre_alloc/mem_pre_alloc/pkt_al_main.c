@@ -1,20 +1,3 @@
-/*
- * =====================================================================================
- *
- *	   Filename:  pkt_al_main.c
- *
- *	Description:  
- *
- *		Version:  1.0
- *		Created:  2016-05-16日 11-21-44
- *	   Revision:  none
- *	   Compiler:  gcc
- *
- *		 Author:  Jinchong
- *		Company:  
- *
- * =====================================================================================
- */
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
