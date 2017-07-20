@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include "mgnl_router.h"
 
-int	main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	nl_rtinfo_t rt;
 	void *nl;
