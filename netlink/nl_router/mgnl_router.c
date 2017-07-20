@@ -48,6 +48,18 @@ unsigned int ifname_to_index(const char *ifname)
 	return if_index;
 }
 
+unsigned int if_index_to_name(unsigned int if_index, char *if_name)
+{
+    char *name = NULL;
+    name = if_indextoname(if_index, if_name);
+    if(NULL == name && errno == ENXIO) {
+        fprintf(stderr, "Index %d : No such device\n", if_index);
+        return -1; 
+    }   
+
+    return if_index;
+}
+
 static inline int rtm_get_table(struct rtmsg *r, struct rtattr **tb)
 {
 	unsigned int table = r->rtm_table;
