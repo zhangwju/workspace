@@ -206,7 +206,7 @@ int mgnl_dump_filter(struct mgnl_socket *nl, int table)
 	
 	/* set select timeout */
 	timeout.tv_sec = 2;   
-    timeout.tv_usec = 0;
+	timeout.tv_usec = 0;
 	
 	ret = select(nl->fd+1, &rfds, NULL, NULL, &timeout);
 	switch(ret) {
@@ -259,7 +259,7 @@ int mgnl_dump_filter(struct mgnl_socket *nl, int table)
 					mgnl_table_flush(nl, nl_buf, size, table);	
 				}
 			}
-    	}
+    		}
 	}	
 	return 0;
 }
@@ -289,19 +289,20 @@ int mgnl_dump_request(struct mgnl_socket *nl, int type)
 int nl_rtinfo_parse(struct nlmsghdr *nlh, int type)
 {
 	int len;  
-    struct rtattr *rt_attr;  
-    struct rtmsg *rt_msg;  
-    char tmp[256];  
+	struct rtattr *rt_attr;  
+	struct rtmsg *rt_msg;  
+	char tmp[256];  
 	int rt_len;
 	nl_rtinfo_t rt_info;
-
-    rt_msg = NLMSG_DATA(nlh);  
+	
+	rt_msg = NLMSG_DATA(nlh);  
 	rt_attr = (struct rtattr *)RTM_RTA(rt_msg);
 	rt_len = RTM_PAYLOAD(nlh);
 
 	memset(&rt_info, 0, sizeof(rt_info));
 	rt_info.tid = rt_msg->rtm_table;
 	rt_info.mask = rt_msg->rtm_dst_len;
+	
 	for(; RTA_OK(rt_attr,rt_len); rt_attr=RTA_NEXT(rt_attr,rt_len)) {
 		switch(rt_attr->rta_type) {
 		case RTA_OIF:
@@ -354,8 +355,8 @@ int nl_route_recv(const struct mgnl_socket *nl, char *nl_buf, int buflen)
 	FD_SET(nl->fd, &rfds);	//add nlfd to fd_set
 	
 	/* set select timeout */
-	timeout.tv_sec = 2;   
-    timeout.tv_usec = 0;
+	timeout.tv_sec = 2;
+	timeout.tv_usec = 0;
 	
 	ret = select(nl->fd+1, &rfds, NULL, NULL, &timeout);
 	switch(ret) {
