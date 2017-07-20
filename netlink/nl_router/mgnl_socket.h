@@ -11,7 +11,7 @@ struct mgnl_socket {
 	unsigned int dump;
 };
 
-struct mgnl_socket * mgnl_socket_open(int bus);
+struct mgnl_socket *mgnl_socket_open(int bus);
 void mgnl_socket_close(struct mgnl_socket *nl);
 int mgnl_socket_bind(struct mgnl_socket *nl, unsigned int groups, pid_t pid);
 ssize_t mgnl_socket_sendto(const struct mgnl_socket *nl, const void *buf, size_t len);

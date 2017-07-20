@@ -9,7 +9,7 @@
 int main(int argc, char **argv)
 {
 	nl_rtinfo_t rt;
-	void *nl;
+	struct mgnl_socket *nl;
 
 	if(argc != 5) {
 		printf("Usage: %s <dst> <mask> <gw> <ifname>\n", argv[0]);

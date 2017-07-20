@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/socket.h>
+#include <unistd.h>
 #include <netinet/in.h>
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
@@ -188,13 +189,14 @@ int mgnl_table_flush(struct mgnl_socket *nl, const char *nlmsg, int msg_len, int
 			rtnl_send_check(nl, nl_buf, n->nlmsg_len);
 		}
 	}
+
+	return 0;
 }
 
 int mgnl_dump_filter(struct mgnl_socket *nl, int table)
 {
 	int status;
 	int ret, size;
-	int  msglen = 0;
 	fd_set rfds;
 	struct timeval timeout;
 	struct nlmsghdr *nh;
@@ -284,14 +286,14 @@ int mgnl_dump_request(struct mgnl_socket *nl, int type)
 		perror("send netlink failure\n");
 		return -1;
 	}
+
+	return 0;
 }
 
 int nl_rtinfo_parse(struct nlmsghdr *nlh, int type)
 {
-	int len;  
 	struct rtattr *rt_attr;  
 	struct rtmsg *rt_msg;  
-	char tmp[256];  
 	int rt_len;
 	nl_rtinfo_t rt_info;
 	
@@ -323,6 +325,8 @@ int nl_rtinfo_parse(struct nlmsghdr *nlh, int type)
 		}
 	} 	
 	show_rtinfo(&rt_info);
+
+	return 0;
 }
 
 int nl_respose_handle(const char *nlmsg, int msg_len, int type)
@@ -536,7 +540,7 @@ int nl_route_flush(struct mgnl_socket *nl, int table)
 	return 0;
 }
 
-void *mgnl_init()
+struct mgnl_socket *mgnl_init()
 {
 	pid_t pid;
 	struct mgnl_socket *nl = NULL;
@@ -553,10 +557,11 @@ void *mgnl_init()
 		return NULL;
 	}
 	
-	return (void *)nl;
+	return nl;
 }
 
-void  mgnl_release(void *nl)
+void mgnl_release(struct mgnl_socket *nl)
 {
-	mgnl_socket_close((struct mgnl_socket *)nl);
+	mgnl_socket_close(nl);
 }
+

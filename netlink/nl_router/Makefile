@@ -2,7 +2,8 @@
 # Design of mgnl_route
 #
 
-LDFLAGS = -lpthread  -Wstrict-prototypes
+LDFLAGS = -lpthread
+TARGET_CFLAGS = -g -Wall
 FPIC = -fPIC -c
 SHARED = -shared -o
 

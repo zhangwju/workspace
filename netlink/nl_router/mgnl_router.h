@@ -16,9 +16,10 @@ typedef struct nl_rtinfo {
 	char			ifname[IFNAMESIZE];
 }nl_rtinfo_t;
 
-extern void *mgnl_init();
-extern void mgnl_release(void *nl);
+extern struct mgnl_socket *mgnl_init();
+extern void mgnl_release(struct mgnl_socket *nl);
 extern int nl_route_add(struct mgnl_socket *nl, nl_rtinfo_t *rt);
 extern int nl_route_del(struct mgnl_socket *nl, nl_rtinfo_t *rt);
+extern int nl_route_get(struct mgnl_socket *nl);
 extern int nl_route_flush(struct mgnl_socket *nl, int table);
 #endif // __MGNL_ROUTER_H_
