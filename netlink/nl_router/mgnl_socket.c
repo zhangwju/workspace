@@ -87,6 +87,7 @@ ssize_t mgnl_socket_recvfrom(const struct mgnl_socket *nl, void *buf, size_t buf
 		.iov_base       = buf,
 		.iov_len        = bufsiz,
 	};
+	
 	struct msghdr msg = {
 		.msg_name       = &addr,
 		.msg_namelen    = sizeof(struct sockaddr_nl),
