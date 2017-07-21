@@ -409,7 +409,7 @@ int nl_route_recv(const struct mgnl_socket *nl, char *nl_buf, int buflen)
 					}
 				}
 			} while((nh->nlmsg_seq != nl->seq) || (nh->nlmsg_pid != nl->addr.nl_pid));
-    	}
+    		}
 	}
 
 	return msglen;
