@@ -1,9 +1,8 @@
 #ifndef __MGNL_ROUTER_H_
 #define __MGNL_ROUTER_H_
-#include "mgnl_socket.h"
 
-#ifndef IFNAMESIZE
-#define IFNAMESIZE 16
+#ifndef IFNAMESE
+#define IFNAMESE 16
 #endif
 
 typedef struct nl_rtinfo {
@@ -13,13 +12,13 @@ typedef struct nl_rtinfo {
 	unsigned int	mask;
 	int 			tid;
 	int 			metric;
-	char			ifname[IFNAMESIZE];
+	char			ifname[IFNAMESE];
 }nl_rtinfo_t;
 
-extern struct mgnl_socket *mgnl_init();
-extern void mgnl_release(struct mgnl_socket *nl);
-extern int nl_route_add(struct mgnl_socket *nl, nl_rtinfo_t *rt);
-extern int nl_route_del(struct mgnl_socket *nl, nl_rtinfo_t *rt);
-extern int nl_route_get(struct mgnl_socket *nl);
-extern int nl_route_flush(struct mgnl_socket *nl, int table);
+extern void * mgnl_init();
+extern void mgnl_release(void *nl);
+extern int nl_route_add(void *nl, nl_rtinfo_t *rt);
+extern int nl_route_del(void *nl, nl_rtinfo_t *rt);
+extern int nl_route_get(void *nl);
+extern int nl_route_flush(void *nl, int table);
 #endif // __MGNL_ROUTER_H_

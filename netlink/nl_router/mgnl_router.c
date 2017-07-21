@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <net/if.h>
+#include "mgnl_socket.h"
 #include "mgnl_router.h"
 
 #define	ATTR_LEN	1024
@@ -498,16 +499,16 @@ int nl_route_handle(struct mgnl_socket *nl, nl_rtinfo_t *rt, int type)
 	return 0;
 }
 
-int nl_route_get(struct mgnl_socket *nl)
+int nl_route_get(void *nl)
 {
 	int size;
 	char nl_buf[1024];
 	
-	if (mgnl_dump_request(nl, RTM_GETROUTE) < 0) {
+	if (mgnl_dump_request((struct mgnl_socket *)nl, RTM_GETROUTE) < 0) {
 		return -1;
 	}
 
-	size = nl_route_recv(nl, nl_buf, sizeof(nl_buf));
+	size = nl_route_recv((struct mgnl_socket *)nl, nl_buf, sizeof(nl_buf));
 	if(size < 0) {
 		return -1;
 	}
@@ -516,31 +517,32 @@ int nl_route_get(struct mgnl_socket *nl)
 	return 0;
 }
 
-int nl_route_del(struct mgnl_socket *nl, nl_rtinfo_t *rt)
+int nl_route_del(void *nl, nl_rtinfo_t *rt)
 {
-	return nl_route_handle(nl, rt, RTM_DELROUTE);
+	return nl_route_handle((struct mgnl_socket *)nl, rt, RTM_DELROUTE);
 }
 
-int nl_route_add(struct mgnl_socket *nl, nl_rtinfo_t *rt)
+int nl_route_add(void *nl, nl_rtinfo_t *rt)
 {
 	
-	return nl_route_handle(nl, rt, RTM_NEWROUTE);
+	return nl_route_handle((struct mgnl_socket *)nl, rt, RTM_NEWROUTE);
 }
 
-int nl_route_flush(struct mgnl_socket *nl, int table)
+int nl_route_flush(void *nl, int table)
 {
-	if (mgnl_dump_request(nl, RTM_GETROUTE) < 0) {
+	struct mgnl_socket *n = (struct mgnl_socket *)nl;
+	if (mgnl_dump_request(n, RTM_GETROUTE) < 0) {
 		return -1;
 	}
 
-	if (mgnl_dump_filter(nl, table) < 0) {
+	if (mgnl_dump_filter(n, table) < 0) {
 		return -1;
 	}
 
 	return 0;
 }
 
-struct mgnl_socket *mgnl_init()
+void *mgnl_init()
 {
 	pid_t pid;
 	struct mgnl_socket *nl = NULL;
@@ -557,11 +559,11 @@ struct mgnl_socket *mgnl_init()
 		return NULL;
 	}
 	
-	return nl;
+	return (void *)nl;
 }
 
-void mgnl_release(struct mgnl_socket *nl)
+void mgnl_release(void *nl)
 {
-	mgnl_socket_close(nl);
+	mgnl_socket_close((struct mgnl_socket *)nl);
 }
 
