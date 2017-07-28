@@ -1,20 +1,3 @@
-/*
- * =====================================================================================
- *
- *	   Filename:  pa_mem_struct.h
- *
- *	Description:  
- *
- *		Version:  1.0
- *		Created:  2016-05-31日 11-21-44
- *	   Revision:  none
- *	   Compiler:  gcc
- *
- *		 Author:  Jinchong
- *		Company:  
- *
- * =====================================================================================
- */
 #ifndef __PA_MEM_STRUCT_H__
 #define __PA_MEM_STRUCT_H__
 #include "array-hlist.h"
