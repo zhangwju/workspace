@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
-#include "mgnl_socket.h"
+#include "mgw_socket.h"
 
 int mgnl_socket_get_fd(const struct mgnl_socket *nl)
 {

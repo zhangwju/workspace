@@ -4,11 +4,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include "mgnl_router.h"
+#include "mgw_router.h"
 
 int main(int argc, char **argv)
 {
-	nl_rtinfo_t rt;
+	rtinfo_t rt;
 	void *nl;
 
 	if(argc != 5) {
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	nl = mgnl_init();
+	nl = mgw_route_init();
 	if(NULL == nl) {
 		return -1;
 	}
@@ -28,10 +28,10 @@ int main(int argc, char **argv)
 	rt.metric 	= 10;
 	strcpy(rt.ifname, argv[4]);
 	
-	nl_route_add(nl, &rt);
-	nl_route_del(nl, &rt);	
-	nl_route_get(nl);
-	mgnl_release(nl);
+	mgw_route_add(nl, &rt);
+	mgw_route_del(nl, &rt);	
+	mgw_route_get(nl);
+	mgw_route_release(nl);
 
 	return 0;
 }

@@ -15,8 +15,8 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <net/if.h>
-#include "mgnl_socket.h"
-#include "mgnl_router.h"
+#include "mgw_socket.h"
+#include "mgw_router.h"
 
 #define	ATTR_LEN	1024
 #define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
@@ -115,7 +115,7 @@ int addattr32(struct nlmsghdr *n, int maxlen, int type, __u32 data)
 	return 0;
 }
 
-static void  show_rtinfo(nl_rtinfo_t *rt_info)
+static void  show_rtinfo(rtinfo_t *rt_info)
 {
 	static int cnt = 0;
 	if (cnt == 0) {
@@ -296,7 +296,7 @@ int nl_rtinfo_parse(struct nlmsghdr *nlh, int type)
 	struct rtattr *rt_attr;  
 	struct rtmsg *rt_msg;  
 	int rt_len;
-	nl_rtinfo_t rt_info;
+	rtinfo_t rt_info;
 	
 	rt_msg = NLMSG_DATA(nlh);  
 	rt_attr = (struct rtattr *)RTM_RTA(rt_msg);
@@ -315,7 +315,7 @@ int nl_rtinfo_parse(struct nlmsghdr *nlh, int type)
 			rt_info.gw = *(unsigned int *)RTA_DATA(rt_attr);
 			break;
 		case RTA_PREFSRC:
-			rt_info.src = *(unsigned int *)RTA_DATA(rt_attr);
+			//rt_info.src = *(unsigned int *)RTA_DATA(rt_attr);
 			break;
 		case RTA_DST:
 			rt_info.dst = *(unsigned int  *)RTA_DATA(rt_attr);
@@ -415,7 +415,7 @@ int nl_route_recv(const struct mgnl_socket *nl, char *nl_buf, int buflen)
 	return msglen;
 }
 
-int nl_route_handle(struct mgnl_socket *nl, nl_rtinfo_t *rt, int type)
+int nl_route_handle(struct mgnl_socket *nl, rtinfo_t *rt, int type)
 {
 	char nl_buf[1024];
 	unsigned int index = -1;
@@ -499,7 +499,7 @@ int nl_route_handle(struct mgnl_socket *nl, nl_rtinfo_t *rt, int type)
 	return 0;
 }
 
-int nl_route_get(void *nl)
+int mgw_route_get(void *nl)
 {
 	int size;
 	char nl_buf[1024];
@@ -517,18 +517,18 @@ int nl_route_get(void *nl)
 	return 0;
 }
 
-int nl_route_del(void *nl, nl_rtinfo_t *rt)
+int mgw_route_del(void *nl, rtinfo_t *rt)
 {
 	return nl_route_handle((struct mgnl_socket *)nl, rt, RTM_DELROUTE);
 }
 
-int nl_route_add(void *nl, nl_rtinfo_t *rt)
+int mgw_route_add(void *nl, rtinfo_t *rt)
 {
 	
 	return nl_route_handle((struct mgnl_socket *)nl, rt, RTM_NEWROUTE);
 }
 
-int nl_route_flush(void *nl, int table)
+int mgw_route_flush(void *nl, int table)
 {
 	struct mgnl_socket *n = (struct mgnl_socket *)nl;
 	if (mgnl_dump_request(n, RTM_GETROUTE) < 0) {
@@ -542,7 +542,7 @@ int nl_route_flush(void *nl, int table)
 	return 0;
 }
 
-void *mgnl_init()
+void *mgw_route_init()
 {
 	pid_t pid;
 	struct mgnl_socket *nl = NULL;
@@ -562,8 +562,7 @@ void *mgnl_init()
 	return (void *)nl;
 }
 
-void mgnl_release(void *nl)
+void mgw_route_release(void *nl)
 {
 	mgnl_socket_close((struct mgnl_socket *)nl);
 }
-
