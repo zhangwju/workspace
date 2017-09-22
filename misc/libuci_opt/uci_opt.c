@@ -58,7 +58,7 @@ char * uci_get_option(const char *package, const char *section, const char *opti
 	if ((uci_lookup_ptr(ctx, &ptr, cmd, true) != UCI_OK) || ptr.o == NULL) {
 		uci_free_context(ctx);	
 		return NULL;
-    }
+    	}
 	uci_get_value(ptr.o, data);
 	uci_free_context(ctx);	
 	return data;
@@ -67,7 +67,7 @@ char * uci_get_option(const char *package, const char *section, const char *opti
 int uci_set_section(const char *package, const char *section_type, const char *section)
 {
 	struct uci_context *ctx;
-    int ret = UCI_OK;
+    	int ret = UCI_OK;
 	
 	ctx = uci_alloc_context();
 	if (!ctx) {
@@ -79,7 +79,7 @@ int uci_set_section(const char *package, const char *section_type, const char *s
         .package = package,
         .section = section,
         .value = section_type,
-    };
+   	 };
 	
 	ret = uci_set(ctx, &ptr);
 	if (ret == UCI_OK)
@@ -92,7 +92,7 @@ int uci_set_section(const char *package, const char *section_type, const char *s
 int uci_del_option(const char *package, const char *section, const char *option, const char *value, enum uci_option_type type)
 {
 	struct uci_context *ctx;
-    int ret = UCI_OK;
+    	int ret = UCI_OK;
 	
 	ctx = uci_alloc_context();
 	if (!ctx) {
@@ -105,7 +105,7 @@ int uci_del_option(const char *package, const char *section, const char *option,
         .section = section,
         .option = option,
         .value = value,
-    };
+    	};
 
 	switch(type){
 	case UCI_TYPE_STRING:
@@ -129,7 +129,7 @@ int uci_del_option(const char *package, const char *section, const char *option,
 int uci_set_option(const char *package, const char *section, const char *option, const char *value, enum uci_option_type type)
 {
 	struct uci_context *ctx;
-    int ret = UCI_OK;
+    	int ret = UCI_OK;
 	
 	ctx = uci_alloc_context();
 	if (!ctx) {
@@ -142,7 +142,7 @@ int uci_set_option(const char *package, const char *section, const char *option,
         .section = section,
         .option = option,
         .value = value,
-    };
+    	};
 	
 	switch(type){
 	case UCI_TYPE_STRING:
@@ -181,7 +181,7 @@ int uci_opt_commit(char *package)
 		uci_perror(ctx, "uci_lookup_ptr");
 		uci_free_context(ctx);
 		return -1;
-    }	
+    	}	
 	uci_commit(ctx, &ptr.p, false);
 	
 	if (ptr.p)
