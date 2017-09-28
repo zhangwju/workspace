@@ -1,10 +1,10 @@
 /***************************************************************
  *    Filename:  curlbat.c
  *    Description:  
- *      Created:  11/16/2016 02:28:55 AM
- *      Revision:  none
- *      Compiler:  gcc
- *      Author:	zhangwj
+ *    Created:  11/16/2016 02:28:55 AM
+ *    Revision:  none
+ *    Compiler:  gcc
+ *    Author:	zhangwj
  ***************************************************************/
 #include <stdio.h>
 #include <string.h>
@@ -150,7 +150,7 @@ static int curl_multi_handle_info(curlbat_req_t * batreq, void * curlbat_info)
 
 			res = curl_easy_getinfo(msg->easy_handle, CURLINFO_CONTENT_TYPE, &type); /*judge source type (video file application ....)*/
 			if (res != CURLE_OK || NULL == type) {   
-					return -1; 
+				return -1; 
 			}
 			strncpy(batreq[*index].type, type, TYPE_MAX);
 
