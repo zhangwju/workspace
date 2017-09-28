@@ -13,6 +13,7 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #ifndef IPLEN
 #define IPLEN 16
@@ -97,7 +98,6 @@ int get_broip_by_name(const char *ifname, char *bro_ip)
 int get_mac_by_name(const char *ifname, char * mac)
 {
 	int sock = 0;
-	struct sockaddr_in sin;
 	struct ifreq ifr;
 	unsigned char tmp_mac[6];
 
@@ -192,12 +192,43 @@ int sock_bind_to_device(int sock, const char *ifname)
 	return 0;
 }
 
+int AddMulticastMembership(int s, const char *mcast_addr, const char *ifaddr)
+{
+	struct ip_mreq imr;	/* Ip multicast membership */
+
+	/* setting up imr structure */
+	imr.imr_multiaddr.s_addr = inet_addr(mcast_addr);
+	/*imr.imr_interface.s_addr = htonl(INADDR_ANY);*/
+	imr.imr_interface.s_addr = inet_addr(ifaddr);
+
+	if (setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void *)&imr, sizeof(struct ip_mreq)) < 0) {
+		perror("setsockopt(IP_ADD_MEMBERSHIP)");
+		return -1;
+	}
+	return 0;
+}
+
+int DropMulticastMembership(int s, const char *mcast_addr, const char *ifaddr)
+{
+	struct ip_mreq imr;	/* Ip multicast membership */
+
+	/* setting up imr structure */
+	imr.imr_multiaddr.s_addr = inet_addr(mcast_addr);
+	/*imr.imr_interface.s_addr = htonl(INADDR_ANY);*/
+	imr.imr_interface.s_addr = inet_addr(ifaddr);
+
+	if (setsockopt(s, IPPROTO_IP, IP_DROP_MEMBERSHIP, (void *)&imr, sizeof(struct ip_mreq)) < 0) {
+		perror("setsockopt(IP_DROP_MEMBERSHIP)");
+		return -1;
+	}
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	char ip[16];
 	char bro_ip[16];
 	char mac[20];
-	int status;
 
 	if(argc != 2) {
 		printf("Usage: %s <ifname>\n", argv[0]);
