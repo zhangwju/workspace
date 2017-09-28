@@ -22,9 +22,9 @@ int main()
 	int ret  = 0;
 
 	sigset_t sigset;
-    sigemptyset(&sigset);
-    sigaddset(&sigset, SIGALRM);
-    pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+    	sigemptyset(&sigset);
+    	sigaddset(&sigset, SIGALRM);
+    	pthread_sigmask(SIG_BLOCK, &sigset, NULL);
 
 	if (timer_init() == 0) {
 		printf("timer init failure\n");
