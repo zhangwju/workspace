@@ -125,9 +125,9 @@ static void *cronometer(void *arg)
 	sigemptyset(&mask);
 	sigaddset(&mask, SIGALRM);
 
-	/* 设置线程取消点 */
+	/* 脡猫脰脙脧脽鲁脤脠隆脧没碌茫 */
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+    	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
 
 	pthread_mutex_lock(&timerq.mutex);
 	pthread_cond_signal(&timerq.cond);
@@ -149,8 +149,8 @@ static void *cronometer(void *arg)
 
 		if(timerq.first->cancelled == 1) {
 			timer_dequeue(timerq.first);
-            pthread_mutex_unlock(&timerq.mutex);
-            continue;
+            		pthread_mutex_unlock(&timerq.mutex);
+            		continue;
 		}
 
 		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL); //DISABLE PTHREAD_CANCEL
@@ -192,10 +192,9 @@ int timer_init()
 		pthread_cond_destroy(&timerq.cond);
 		return 0;
 	}
-	
-    gettimeofday(&tv, NULL);
-    ts.tv_sec = tv.tv_sec + 5;
-    ts.tv_nsec = tv.tv_usec * 1000;
+	gettimeofday(&tv, NULL);
+	ts.tv_sec = tv.tv_sec + 5;
+	ts.tv_nsec = tv.tv_usec * 1000;
 
 	ret = pthread_cond_timedwait(&timerq.cond, &timerq.mutex, &ts);
 	if (ret != 0) {
@@ -205,7 +204,7 @@ int timer_init()
 			return 0;
 		}
 		pthread_mutex_destroy(&timerq.mutex);
-        pthread_cond_destroy(&timerq.cond);
+        	pthread_cond_destroy(&timerq.cond);
 		return 0;
 	}
 	pthread_detach(timerq.tid);
@@ -238,21 +237,20 @@ int timer_add(long sec, long usec, void(*hndlr)(void *), void *hndlr_arg)
 	}
 
 	/* relative to absolute time for timer */
-    gettimeofday(&new, NULL);
+    	gettimeofday(&new, NULL);
 
-    /* add 10^6 microsecond units to seconds */
-    new.tv_sec += sec + (new.tv_usec + usec) / 1000000;
-    /* keep microseconds inside allowed range */
-    new.tv_usec = (new.tv_usec + usec) % 1000000;
-
+   	 /* add 10^6 microsecond units to seconds */
+    	new.tv_sec += sec + (new.tv_usec + usec) / 1000000;
+    	/* keep microseconds inside allowed range */
+   	new.tv_usec = (new.tv_usec + usec) % 1000000;
 	memcpy(&app->timeout, &new, sizeof(struct timeval));
-    app->handler = hndlr;
-    app->handler_arg = hndlr_arg;
+    	app->handler = hndlr;
+    	app->handler_arg = hndlr_arg;
 
-    id = timerq.cur_id++;
-    app->id = id;
-    app->in_use = 0;
-    app->cancelled = 0;
+    	id = timerq.cur_id++;
+    	app->id = id;
+    	app->in_use = 0;
+    	app->cancelled = 0;
 
 	if (timerq.first == NULL) {
         /* timer queue empty */
