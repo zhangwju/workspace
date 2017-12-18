@@ -224,6 +224,20 @@ int DropMulticastMembership(int s, const char *mcast_addr, const char *ifaddr)
 	return 0;
 }
 
+void test_pthread(pthread_t tid) 
+{
+    int pthread_kill_err;
+    pthread_kill_err = pthread_kill(tid,0);
+
+    if(pthread_kill_err == ESRCH) {
+        printf("thread not exists\n");  
+    }else if(pthread_kill_err == EINVAL) {
+        printf("singnal invalid\n");
+    } else {
+        printf("thread is alive\n");
+    }   
+}
+
 int main(int argc, char **argv)
 {
 	char ip[16];
