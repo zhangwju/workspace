@@ -8,10 +8,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "iface_info.h"
+#include "common.h"
 
 static struct iface_info_t *iface_node_header = NULL;
 
-struct iface_info_t * iface_node_insert(const char *ifname, uint type, uint subid)
+struct iface_info_t * iface_node_insert(const char *ifname, int type, int subid, int status)
 {
 	struct iface_info_t *find = NULL;
 	struct iface_info_t *cur = NULL;
@@ -25,9 +26,9 @@ struct iface_info_t * iface_node_insert(const char *ifname, uint type, uint subi
 		return NULL;
 	}
 
-	memset(cur, 0, sizeof(struct if_info_t));
+	memset(cur, 0, sizeof(struct iface_info_t));
 	strncpy(cur->ifname, ifname, IFNAMESZ);
-	cur->state = DEV_LINK_UP;
+	cur->state = status;
 	cur->type = type;
 	cur->subid = subid;
 	cur->next = NULL;
@@ -45,7 +46,7 @@ struct iface_info_t * iface_node_insert(const char *ifname, uint type, uint subi
 	return cur;
 }
 
-struct get_iface_node(const char *ifname)
+struct iface_info_t *get_iface_node(const char *ifname)
 {
 	struct iface_info_t *node = NULL;
 	

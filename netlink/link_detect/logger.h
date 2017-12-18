@@ -2,8 +2,6 @@
  *  logger.h
  *
  *  Copyright (c) 2014 Daniel Rocha. All rights reserved.
- *  Modify:
- *          1. Teidor Tien, 2015/12/29, in my format
  */
 
 #ifndef LOGGER_H
@@ -31,33 +29,6 @@ typedef enum {
 	LOG_LEVEL_OFF
 }E_LOG_LEVEL;
 
-
-/* -------------------------------------------------------------------------- *
- *                                   MACROS                                   *
- * -------------------------------------------------------------------------- */
-
-#define ZP_LOG_TRACE(...) \
-    log_print(__FILE__, __LINE__, LOG_LEVEL_TRACE, __VA_ARGS__)
-
-#define ZP_LOG_DEBUG(...) \
-    log_print(__FILE__, __LINE__, LOG_LEVEL_DEBUG, __VA_ARGS__)
-
-#define ZP_LOG_INFO(...)  \
-    log_print(__FILE__, __LINE__, LOG_LEVEL_INFO , __VA_ARGS__)
-
-#define ZP_LOG_WARNING(...)  \
-    log_print(__FILE__, __LINE__, LOG_LEVEL_WARN , __VA_ARGS__)
-
-#define ZP_LOG_ERROR(...) \
-    log_print(__FILE__, __LINE__, LOG_LEVEL_ERROR, __VA_ARGS__)
-
-#define ZP_LOG_FATAL(...) \
-    log_print(__FILE__, __LINE__, LOG_LEVEL_FATAL, __VA_ARGS__)
-
-/* -------------------------------------------------------------------------- *
- *                                 PROTOTYPES                                 *
- * -------------------------------------------------------------------------- */
-
 /*  Entry access of logger,  determined the logger identifier, file path , file size , the logger level and screen output*/
 int log_init(const char *ident, const char *log_file, int filesize, E_LOG_LEVEL level, int scn_op);
 
@@ -66,6 +37,5 @@ void log_print(const char *file, int line, int level, ...);
 
 /* Shutdown the logger stream */
 void log_exit(void);
-
 
 #endif

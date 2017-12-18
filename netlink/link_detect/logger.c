@@ -46,7 +46,7 @@ static struct {
     NULL
 };
 
-int log_enable = 0;
+extern int log_enable;
 char log_file_name[MAX_LOG_FILE_NAME_LEN] = {0};
 
 /* -------------------------------------------------------------------------- *

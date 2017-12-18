@@ -24,9 +24,9 @@ int nn_socket_ipc_init(int *fd, const char * ipc_addr)
 {
     int ret;
     int nn_fd;
-    int timeout =2000; /* 2s */
+    int timeout = 2000; /* 2s */
     
-    /* open a REQ sokket */
+    /* open a NN_PAIR socket */
     nn_fd = nn_socket(AF_SP, NN_PAIR);
     if (nn_fd < 0) {
         log_dbg("Failed create socket: %s [%d]",
@@ -42,16 +42,18 @@ int nn_socket_ipc_init(int *fd, const char * ipc_addr)
         return -1; 
     }   
 
-    /* set recv timeout */
+#if 0
+    /* set send timeout */
     ret = nn_setsockopt(nn_fd, NN_SOL_SOCKET, NN_SNDTIMEO, &timeout, sizeof (timeout)); 
     if (ret < 0) {
         log_dbg("Nn socket set NNN_SEDTIMEO failure");
         nn_close(nn_fd);
         return -1; 
-    }   
-    
+    }
+#endif      
     *fd = nn_fd;
-    log_dbg("Success connect socket fd:%d addr:%s", *fd, tcp_addr);
+	
+    log_dbg("Connect success [%s]\n", ipc_addr);
     return nn_fd;
 }
 
@@ -62,16 +64,16 @@ int nn_socket_send(int fd, const void *send_buf, int buf_len)
 		return -1;
 	}
 
-	ret = nn_send(fd, send_buf, buf_len 0);
+	ret = nn_send(fd, send_buf, buf_len, 0);
 	if(ret < 0) {
-		log_dbg("nn_send  Error[%d:%s]", (int)errno, nn_strerror(errno));
+		//log_dbg("nn_send  Error[%d:%s]", (int)errno, nn_strerror(errno));
 		return -1;
 	}
 	
 	return ret;
 }
 
-int nn_socket_close(int fd)
+void nn_socket_close(int fd)
 {
 	nn_close(fd);
 }
