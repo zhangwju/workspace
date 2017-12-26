@@ -129,15 +129,15 @@ int iproute_modify(int cmd, unsigned flags, IPROUTE_T rt)
 	}
 
     if (rt.tid > 0) {
-		__u32 tid;
-		tid = rt.tid;
+	__u32 tid;
+	tid = rt.tid;
         if (tid < 256) {
             req.r.rtm_table = tid;
         } else {
             req.r.rtm_table = RT_TABLE_UNSPEC;
             addattr32(&req.n, sizeof(req), RTA_TABLE, tid);
-        }   
-		table_ok = 1;
+        }
+	table_ok = 1;
     }  
 	
 	__u32 metric;
@@ -147,9 +147,9 @@ int iproute_modify(int cmd, unsigned flags, IPROUTE_T rt)
 
 	if (!table_ok) {
 		if (req.r.rtm_type == RTN_LOCAL ||
-		    req.r.rtm_type == RTN_BROADCAST ||
-		    req.r.rtm_type == RTN_NAT ||
-		    req.r.rtm_type == RTN_ANYCAST)
+			req.r.rtm_type == RTN_BROADCAST ||
+			req.r.rtm_type == RTN_NAT ||
+			req.r.rtm_type == RTN_ANYCAST)
 			req.r.rtm_table = RT_TABLE_LOCAL;
 	}
 	if (!scope_ok) {
