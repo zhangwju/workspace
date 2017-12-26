@@ -49,7 +49,7 @@ unsigned int if_index_to_name(unsigned int if_index, char *if_name)
 {
     char *name = NULL;
     name = if_indextoname(if_index, if_name);
-    if(NULL == name && errno == ENXIO) {
+    if (NULL == name && errno == ENXIO) {
         fprintf(stderr, "Index %d : No such device\n", if_index);
         return -1;
     }
@@ -107,9 +107,9 @@ int iproute_modify(int cmd, unsigned flags, IPROUTE_T rt)
 	mxrta->rta_len = RTA_LENGTH(0);
 
 	req.r.rtm_dst_len = rt.dst_len;
-    req.r.rtm_src_len = 0;
-    req.r.rtm_tos = 0;
-    req.r.rtm_flags = 0;
+	req.r.rtm_src_len = 0;
+	req.r.rtm_tos = 0;
+	req.r.rtm_flags = 0;
 
 	if ((idx = ifname_to_index(rt.ifname)) == 0) {
 		fprintf(stderr, "Cannot find device \"%s\"\n", rt.ifname);
@@ -139,7 +139,7 @@ int iproute_modify(int cmd, unsigned flags, IPROUTE_T rt)
         }   
 		table_ok = 1;
     }  
-
+	
 	__u32 metric;
 	metric = rt.metric;
 	addattr_l(&req.n, sizeof(req), RTA_PRIORITY, &metric, sizeof(metric));
@@ -154,14 +154,14 @@ int iproute_modify(int cmd, unsigned flags, IPROUTE_T rt)
 	}
 	if (!scope_ok) {
 		if (req.r.rtm_type == RTN_LOCAL ||
-		    req.r.rtm_type == RTN_NAT)
+			req.r.rtm_type == RTN_NAT)
 			req.r.rtm_scope = RT_SCOPE_HOST;
 		else if (req.r.rtm_type == RTN_BROADCAST ||
-			 req.r.rtm_type == RTN_MULTICAST ||
-			 req.r.rtm_type == RTN_ANYCAST)
+			req.r.rtm_type == RTN_MULTICAST ||
+			req.r.rtm_type == RTN_ANYCAST)
 			req.r.rtm_scope = RT_SCOPE_LINK;
 		else if (req.r.rtm_type == RTN_UNICAST ||
-			 req.r.rtm_type == RTN_UNSPEC) {
+			req.r.rtm_type == RTN_UNSPEC) {
 			if (cmd == RTM_DELROUTE)
 				req.r.rtm_scope = RT_SCOPE_NOWHERE;
 			else if (!gw_ok && !nhs_ok)
