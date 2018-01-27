@@ -54,7 +54,7 @@ pthread_rwlock_t g_RWLock;
 pthread_mutex_t g_mutex;
 
 /* Nanomsg */
-int nn_cli_fd;
+int nn_cli_fd = -1;
 
 /* log switch (default disable) */
 int log_enable = 0;
@@ -352,14 +352,16 @@ int linkdetct_init()
 	/* init detect sockfd */
 	for(i = 0; i < plkmgt->dev.uplinks; i++) {
 		if (create_detect_scokfd(&plkmgt->dev.uplink[i]) < 0) {
-			plkmgt->dev.uplink[i].crtflag = 1;
+			plkmgt->dev.uplink[i].valid = 1;
 			plkmgt->dev.uplink[i].sockfd = -1;
 		}
 	}
 
 	/* init uplink netinfo */
 	for(i = 0; i < plkmgt->dev.uplinks; i++) {
-		get_netinfo_by_ifname(plkmgt->dev.uplink[i].ifname, &(plkmgt->dev.uplink[i].net));
+		if (get_netinfo_by_ifname(plkmgt->dev.uplink[i].ifname, &(plkmgt->dev.uplink[i].net)) < 0) {
+			plkmgt->dev.uplink[i].net_ok = 1;
+		}
 		log_dbg("ifname: %s, ip: "IPSTR", netmask: "IPSTR", gw: "IPSTR"", plkmgt->dev.uplink[i].ifname, IP2STR(plkmgt->dev.uplink[i].net.ip), 
 			IP2STR(plkmgt->dev.uplink[i].net.mask),IP2STR(plkmgt->dev.uplink[i].net.gw));
 	}
@@ -579,10 +581,12 @@ static void sighandler(int sig)
 	if (!thread_is_exists(g_l2_thread_handle)) {
 		pthread_cancel(g_l2_thread_handle);
 	}
-
-	nn_socket_close(nn_cli_fd);
-	iface_node_release();
 	
+	if (nn_cli_fd) {
+		nn_socket_close(nn_cli_fd);
+	}
+
+	iface_node_release();
 	free_plkmgt();
 	
 	pthread_mutex_destroy(&g_mutex);
@@ -607,6 +611,7 @@ int globle_init(void)
 	/* init log file */
     if (!log_init("logserver", "/tmp/link_detect.log", 10*1024*1000, LOG_LEVEL_DEBUG, 0)) {
         return -1; 
+
     }
 
 	/* init link config */

@@ -127,11 +127,15 @@ struct uplink_info {
 	int subid;					/* for 4G 0,1,2... */
 	int status;					/* 0: disconnect 1: excellent 2: good 3:poor */
 	int rate;					/* rate of transmission of currnet */
+
+	/* network info */
 	struct netinfo net;
+	int net_ok;					/* 0:ok 1:nok */
+	int irsv;					/* reserve */
 	
 	/* detect info */
 	int sockfd;				
-	int crtflag;				/* control flag of golable */
+	int valid;					/* 0:ok 1: invalid (sockfd flag) */
 	int errcnt;
 	int send_ok;				/* 0:ok 1:nok */
 	int recv_ok;				

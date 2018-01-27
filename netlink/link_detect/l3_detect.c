@@ -359,7 +359,7 @@ int get_max_sockfd(struct uplinks *dev)
 	int i = 0;
 
 	for (i = 0; i < dev->uplinks; i++) {
-		if ((dev->uplink[i].crtflag == 0) && 
+		if ((dev->uplink[i].valid == 0) && 
 			(dev->uplink[i].send_ok == 0) && 
 			(dev->uplink[i].recv_ok == 1)) {
 			if (maxfd < dev->uplink[i].sockfd) {
@@ -420,6 +420,7 @@ void *l3_thread_handler(void *arg)
 	int count;
 	int maxfd;
 	int pos;
+	int do_shut[24];
 	unsigned int detect_addr;
 	struct uplinks *dev;
 	struct timeval tv;
@@ -442,7 +443,9 @@ void *l3_thread_handler(void *arg)
 		for (m = 0; m < MAX_ICMP_SEND_PERIOD; m++) {
 			FD_ZERO(&rfd);
 			for (i = 0; i < dev->uplinks; i++) {
-				if (dev->uplink[i].crtflag == 0 && 
+				if (dev->uplink[i].l2_state != 1 && 
+					dev->uplink[i].valid != 1 &&
+					dev->uplink[i].net_ok != 1 &&
 					dev->uplink[i].recv_ok == 1) {
 
 					detect_addr = dev->uplink[i].net.gw;
@@ -452,9 +455,17 @@ void *l3_thread_handler(void *arg)
 					
 					dstaddr.sin_addr.s_addr = htonl(detect_addr);
 					if (icmp_send(dev->uplink[i].sockfd, (struct sockaddr *)&dstaddr, 1) > 0) {
+						do_shut[i] = 0;
 						dev->uplink[i].send_ok = 0;
 						FD_SET(dev->uplink[i].sockfd, &rfd);
 						//log_dbg("ifname: %s icmp send ok", dev->uplink[i].ifname);
+					} else {
+						if (!((errno == ETIMEDOUT)
+							|| (errno == EINTR)
+							|| (errno == EAGAIN))) {
+							do_shut[i] = 1;
+						}
+						//log_dbg("ifname: %s icmp send, Error[%d:%s]", dev->uplink[i].ifname, errno, strerror(errno));
 					}
 				}
 			}//end for(i)
@@ -463,18 +474,22 @@ void *l3_thread_handler(void *arg)
 			if (maxfd > 0) {
 				ret = select(maxfd + 1, &rfd, NULL, NULL, &tv);
 				if (ret > 0) {
-					//log_dbg("readfd: %d", ret);
 					for (i = 0; i < dev->uplinks; i++) {
-
-						if ((dev->uplink[i].crtflag == 0) && 
+						if ((dev->uplink[i].l2_state != 1) && 
 							(dev->uplink[i].send_ok == 0)) {
 
 							if (FD_ISSET(dev->uplink[i].sockfd, &rfd)) {
 								if (icmp_recv(dev->uplink[i].sockfd) == 0) {
+									do_shut[i] = 0;
 									dev->uplink[i].recv_ok = 0;
 									//log_dbg("ifname: %s icmp recv ok", dev->uplink[i].ifname);
 								} else {
-									//log_dbg("ifname: %s icmp recv, Error[%d:%s]", dev->uplink[i].ifname, errno, strerror(errno));
+									if (!((errno == ETIMEDOUT)
+										|| (errno == EINTR)
+										|| (errno == EAGAIN))) {
+										do_shut[i] = 1;
+									}
+									//log_dbg("ifname: %s icmp recv do_shut: %d, Error[%d:%s]", dev->uplink[i].ifname, do_shut[i], errno, strerror(errno));
 								}
 							}
 						}
@@ -491,20 +506,26 @@ void *l3_thread_handler(void *arg)
 			if (dev->uplink[i].recv_ok == 0) {
 				status = UPLINK_STATUS_EXCELLENT;
 			} else {
-				dev->uplink[i].errcnt ++;
+			//	dev->uplink[i].errcnt ++;
 			}
 
 			l3_uplink_notify(dev->uplink[i].type, status, dev->uplink[i].subid, 0, dev->uplink[i].net);
 			log_dbg("Interface: %-5s Type: %-10s Subid: %-2d Status: %-5s Rate: %d", dev->uplink[i].ifname, 
 				uplink_type[dev->uplink[i].type], dev->uplink[i].subid, (status == UPLINK_STATUS_EXCELLENT)? "up":"down", 0);
 			
-			if (dev->uplink[i].crtflag || dev->uplink[i].errcnt > 3) {
-
+			if (do_shut[i] || dev->uplink[i].valid) {
+				dev->uplink[i].valid = do_shut[i];
 				if (recreate_detect_scokfd(&dev->uplink[i]) > 0) {
-					dev->uplink[i].crtflag = 0;
+					dev->uplink[i].valid = 0;
+				} else {
+					dev->uplink[i].valid = 1;
 				}
-				get_netinfo_by_ifname(dev->uplink[i].ifname, &(dev->uplink[i].net));
-				dev->uplink[i].errcnt = 0;
+			}
+
+			if (get_netinfo_by_ifname(dev->uplink[i].ifname, &(dev->uplink[i].net)) == 0) {
+				dev->uplink[i].net_ok = 0;
+			} else {
+				dev->uplink[i].net_ok = 1;
 			}
 		}//end for()
 

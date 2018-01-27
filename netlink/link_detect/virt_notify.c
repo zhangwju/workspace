@@ -88,7 +88,7 @@ static int virt_notify_packet_handle(const char *device, int state)
 
 	if (state == DEV_EVENT_LINK_DOWN) {
 		status = UPLINK_STATUS_DOWN;
-		uplink->crtflag = 1;
+		uplink->l2_state = 1;
 		
 		memset(&net, 0, sizeof(net));
 		l2_uplink_notify(uplink->type, status, uplink->subid, 0, net);
