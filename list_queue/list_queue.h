@@ -1,22 +1,24 @@
 #ifndef __QUEUE_LIST_H__
 #define __QUEUE_LIST_H__
 
-#define log_dbg(format, ...) fprintf(stderr, "[%s():%d] "format"\n", __FUNCTION__, __LINE__, ## __VA_ARGS__)
-
 typedef struct job {
-    struct job *next;
-    int datalen;
-    char data[0];
+	struct job *next;
+	int datalen;
+	char data[0]; /* struct data */
 }job_t;
 
 typedef struct jobqueue {
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
-    struct job *job;
+	int queue_len;
+	struct job *head;
+	struct job *tail;
+	pthread_mutex_t	mutex;
+	pthread_cond_t	cond;
 } jobqueue_t;
 
-job_t *queue_get(job_t *job);
-int queue_insert(job_t *job, char *data, int datalen);
+int jobqueue_init(jobqueue_t *queue);
+int jobqueue_insert(jobqueue_t *queue, char *data, int datalen);
+job_t * jobqueue_get(jobqueue_t *queue);
 int job_release(job_t *job);
-int queue_release(jobqueue_t *queue);
+int jobqueue_release(jobqueue_t *queue);
+
 #endif /* __QUEUE_LIST_H__ */
