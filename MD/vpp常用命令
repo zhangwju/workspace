@@ -1,0 +1,14 @@
+vpp:
+	sudo lshw -class network -businfo
+	vppctl show int
+	vppctl set int ip address GigabitEthernet0/8/0 172.28.128.5/2
+	vppctl set interface state GigabitEthernet0/8/0 up
+	vppctl show int address
+	vppctl trace add dpdk-input 10
+	vppctl show trace
+		
+安装步骤：
+	git clone https://gerrit.fd.io/r/vpp
+	git checkout v17.04
+	
+	

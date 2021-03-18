@@ -1,0 +1,60 @@
+共享库以.so结尾. (so == share object) 在程序的链接时候并不像静态库那样在拷贝
+    使用函数的代码，而只是作些标记。然后在程序开始启动运行的时候，动态地加载所需模块。所以，
+    应用程序在运行的时候仍然需要共享库的支持。 共享库链接出来的文件比静态库要小得多。
+
+2、共享库的命名
+    一般一个共享库的有三个名字：soname, real-name, linker-name。下面先看实例:
+    $ ls -l /usr/lib/libncurses*
+    lrwxrwxrwx 1 root root     20 2008-05-25 13:54 libncurses.so -> /lib/libncurses.so.5
+    lrwxrwxrwx 1 root root     13 2008-05-26 15:18 libncurses.so.5 -> libtermcap.so
+
+    上面的libncurses.so.5就是soname, 其中ncurses是库名，5分别是主版本号(major)，
+    当然也可以有次版本号(minor)和发行号(release)。(类似于libncurses.so.5.0.0)
+    .so当然表示共享库了。通常soname只是real name的一个链接。
+    而libtermcap.so 这是ncurse库的real-name, 也就是包含真是代码实现的文件.
+    libncurses.so 则是linker name,用于应用程序链接的时候的一个搜索名。 它通常是soname的
+    一个链接,形式为libname.so
+
+3、共享库的装载
+    (1) 在所有基于GNU glibc的系统(当然包括Linux)中，在启动一个ELF二进制执行程序时，
+    一个特殊的程序"程序装载器"会被自动装载并运行。在linux中，这个程序装载器就是
+    /lib/ld-linux.so.X(X是版本号)。它会查找并装载应用程序所依赖的所有共享库。
+    被搜索的目录保存在/etc/ls.so.conf文件中，但一般/usr/local/lib并不在搜索之列，
+    至少debian/ubuntu是这样。这似乎是一个系统失误，只好自己加上了。当然，如果程序的每次启动，
+    都要去搜索一番，势必效率不堪忍受。Linux系统已经考虑这一点，对共享库采用了缓存管理。ldconfig
+    就是实现这一功能的工具，其缺省读取/etc/ld.so.conf文件，对所有共享库按照一定规范建立
+    符号连接，然后将信息写入/etc/ld.so.cache。
+     /etc/ld.so.cache的存在大大加快了程序的启动速度。
+
+    (2) 当然你也可以通过设置环境变量LD_LIBRARY_PATH来设置ld的装载路径。这样装载器就会
+    首先搜索该变量的目录，然后才是默认目录。但是记住，LD_LIBRARY_PATH是用于开发和测试的，
+    你可以将一些用于测试的替代共享库的目录放到该变量中，类似于/etc/ld.so.preload的作用。
+    但是该变量不应该用于正常用户的正常程序。
+
+    (3) 如果你不使用LD_LIBRARY_PATH环境变量，可以通过如下方式给装载器传入路径:
+        $ /lib/ld-linux.so.2 --library-path PATH EXECUTABLE
+
+4、共享库的创建与应用
+    (1) 创建共享库:
+    gcc    -fpic/fPIC -c source.c -o source.o
+    gcc -shared -Wl,-soname,your_soname -o library_name file_list library_list
+    说明:  -fpic或者-fPIC表明创建position independent code，这通常是创建共享库必须的。
+           -Wl 表明给链接器传送参数，所以这里-soname, library_name 为给链接器的参数。
+          -shared 表明是使用共享库
+
+    下面是使用a.c和b.c创建共享库的示例：
+      gcc -fPIC -g -c -Wall a.c
+       gcc -fPIC -g -c -Wall b.c
+       gcc -shared -Wl,-soname, libmyab.so.1 -o libmyab.so.1.0.1 a.o b.o -lc
+    说明: lc == libc
+   
+    几个需要注意的地方：
+      a.不推荐使用strip处理共享库，最好不要使用-fomit-frame-pointer编译选项
+      b.-fPIC和-fpic都可以产生目标独立代码，具体应用取决于平台，-fPIC是always work，
+      尽管其产生的目标文件可能会大些； -fpic产生的代码小，执行速度快，但可能有平台依赖限制。
+      c.一般情况下，-Wall,-soname,your_soname编译选项是需要的。当然，-share选项更不能丢。
+
+    (2) 安装使用共享库
+    一旦你创建好共享库后就需要安装使用了，最简单的办法是将库拷贝到默认目录下(/usr/lib)。
+    然后创建一些符号链接，最简单的方式还是使用ldconfig(8)来处理这里符号链接。最后是重新
+    编译链接你的程序,通过-L和-l参数指定库路径就可以了
